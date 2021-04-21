@@ -1,10 +1,7 @@
 package cy.com.currenciesexample.interactors
 
 import androidx.lifecycle.asLiveData
-import cy.com.currenciesexample.models.Rates
-import cy.com.currenciesexample.models.ResultWrapper
-import cy.com.currenciesexample.models.Symbols
-import cy.com.currenciesexample.models.safeApiCall
+import cy.com.currenciesexample.models.*
 import cy.com.currenciesexample.repositories.CurrencyDatabaseRepository
 import cy.com.currenciesexample.repositories.interfaces.CurrencyRepository
 import cy.com.currenciesexample.room.CurrencyEntity
@@ -26,7 +23,9 @@ class CurrencyInteractor(
         return currencyDatabaseRepository.getCurrencyDetails(code)
     }
 
-    suspend fun fetchDataFromAPI() {
+    suspend fun fetchDataFromAPI(
+        onFailure: ((error: ErrorResponse) -> Unit)? = null
+    ) {
         coroutineScope {
             val getSymbols = async {
                 safeApiCall(Dispatchers.IO) {
@@ -38,15 +37,26 @@ class CurrencyInteractor(
                     currencyRepository.getLatestRates()
                 }
             }
-            addRatesIntoDb(getSymbols.await(), getLatestRates.await())
+            addRatesIntoDb(getSymbols.await(), getLatestRates.await()) {
+                onFailure?.invoke(it)
+            }
         }
     }
 
     private suspend fun addRatesIntoDb(
         symbols: ResultWrapper<Symbols>,
-        rates: ResultWrapper<Rates>
+        rates: ResultWrapper<Rates>,
+        onFailure: ((error: ErrorResponse) -> Unit)? = null
     ) {
         if ((symbols is ResultWrapper.Success) && (rates is ResultWrapper.Success)) {
+            if (symbols.value.success.not() || rates.value.success.not()) {
+                symbols.value.error?.let {
+                    onFailure?.invoke(it)
+                } ?: rates.value.error?.let {
+                    onFailure?.invoke(it)
+                }
+                return
+            }
             val list: ArrayList<CurrencyEntity> = arrayListOf()
             symbols.value.symbols.forEach { (t, u) ->
                 rates.value.rates[t]?.let {
@@ -54,6 +64,7 @@ class CurrencyInteractor(
                 }
             }
             currencyDatabaseRepository.insertIntoDB(list)
-        }
+        } else
+            onFailure?.invoke((symbols as ResultWrapper.Error).errorResponse)
     }
 }

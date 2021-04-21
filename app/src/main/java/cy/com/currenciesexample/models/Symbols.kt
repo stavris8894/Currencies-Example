@@ -6,5 +6,7 @@ data class Symbols(
     @SerializedName("success")
     val success: Boolean,
     @SerializedName("symbols")
-    val symbols: Map<String, String>
+    val symbols: Map<String, String>,
+    @SerializedName("error")
+    val error: ErrorResponse?
 )

@@ -8,7 +8,7 @@ import java.net.URL
 object NetworkConstants {
 
     const val API_URL = "http://data.fixer.io/api/"
-    const val ACCESS_KEY = "a8384217b73caedf1ccdb3a01aff7fe3"
+    const val ACCESS_KEY = "a8384217b73caedf1ccdb3a01aff7fe3d"
 
     //extension to enable debug http logging
     var OkHttpClient.Builder.isLoggingInterceptorEnabled: Boolean

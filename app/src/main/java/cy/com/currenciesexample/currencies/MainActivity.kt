@@ -2,8 +2,9 @@ package cy.com.currenciesexample.currencies
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import cy.com.currenciesexample.R
 import cy.com.currenciesexample.currencies.ui.CurrencyDetailsDialogFragment
 import cy.com.currenciesexample.currencies.viewmodel.CurrenciesViewModel
 import cy.com.currenciesexample.databinding.ActivityMainBinding
@@ -36,6 +37,15 @@ class MainActivity : AppCompatActivity() {
     private fun configureObservers() {
         mViewModel.data.observe(this, {
             mCurrencyAdapter.submitList(it)
+            binding.swipeRefreshLayout.isRefreshing = false
+        })
+        mViewModel.errorResponseLiveData.observe(this, {
+            MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.error)
+                .setMessage(it.info)
+                .setPositiveButton(R.string.ok) { _, _ ->
+
+                }.show()
             binding.swipeRefreshLayout.isRefreshing = false
         })
     }

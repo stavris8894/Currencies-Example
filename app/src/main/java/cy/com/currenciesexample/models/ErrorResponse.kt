@@ -10,5 +10,5 @@ data class ErrorResponse(
     @SerializedName("info")
     val info: String
 ) {
-    constructor() : this(500, "", "Cannot Parse Data")
+    constructor() : this(500, "", "Unknown Error")
 }

@@ -4,6 +4,7 @@ import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
+import java.net.UnknownHostException
 
 sealed class ResultWrapper<out T> {
     data class Success<out T>(val value: T) : ResultWrapper<T>()
@@ -22,6 +23,9 @@ suspend fun <T> safeApiCall(
                 is HttpException -> {
                     val errorResponse = convertErrorBody(throwable)
                     ResultWrapper.Error(errorResponse)
+                }
+                is UnknownHostException -> {
+                    ResultWrapper.Error(ErrorResponse(500, "", "Network Error"))
                 }
                 else -> {
                     ResultWrapper.Error(ErrorResponse())

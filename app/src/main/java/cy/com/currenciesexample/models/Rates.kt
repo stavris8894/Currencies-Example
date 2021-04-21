@@ -12,5 +12,7 @@ data class Rates(
     @SerializedName("date")
     val date: String,
     @SerializedName("rates")
-    val rates: Map<String, Double>
+    val rates: Map<String, Double>,
+    @SerializedName("error")
+    val error: ErrorResponse?
 )

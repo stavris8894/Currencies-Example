@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.*
 import cy.com.currenciesexample.currencies.uidatasource.CurrencyDatasource
 import cy.com.currenciesexample.interactors.CurrencyInteractor
+import cy.com.currenciesexample.models.ErrorResponse
 import cy.com.currenciesexample.models.ResultWrapper
 import cy.com.currenciesexample.utils.interfaces.RecyclerViewItem
 import kotlinx.coroutines.flow.collect
@@ -22,18 +23,13 @@ class CurrenciesViewModel(
         }
     }
 
+    private val _errorResponseLiveData: MutableLiveData<ErrorResponse> = MutableLiveData()
+    val errorResponseLiveData: LiveData<ErrorResponse> = _errorResponseLiveData
+
     fun fetchData() {
         viewModelScope.launch {
-            val result = try {
-                mCurrencyInteractor.fetchDataFromAPI()
-            } catch (e: Exception) {
-                Log.e(TAG, "exception: $e")
-            }
-            when (result) {
-                is ResultWrapper.Error -> {
-                    Log.e(TAG, "exception: ResultWrapper.Error")
-
-                }
+            mCurrencyInteractor.fetchDataFromAPI {
+                _errorResponseLiveData.value = it
             }
         }
     }
