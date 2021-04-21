@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Currencies Example</string>
+    <string name="close">Close</string>
+    <string name="rates">Rates: %1$s</string>
+</resources>

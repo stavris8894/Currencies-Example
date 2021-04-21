@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">data.fixer.io</domain>
+        <pin-set>
+            <!-- main -->
+            <pin digest="SHA-256">aZP+6hh9TMbFgk40ZVsBJFsb32BlowCT4UB7KoygXfs=</pin>
+            <!-- backup -->
+            <pin digest="SHA-256">JSMzqOOrtyOT1kmau6zKhgT676hGgczD5VMdRMyJZFA=</pin>
+        </pin-set>
+        <trustkit-config enforcePinning="true" />
+    </domain-config>
+</network-security-config>
